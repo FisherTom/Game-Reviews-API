@@ -7,3 +7,15 @@ If you are cloning this repo before you run it localy you will need to create a 
 ```psql
 PGDATABASE=<'database name'>
 ```
+
+## task 3 /api/categories
+
+Responds with:
+
+- an array of category objects, each of which should have the following properties:
+  - `slug`
+  - `description`
+
+As this is the first endpoint you will need to set up your testing suite.
+
+Errors handled.
