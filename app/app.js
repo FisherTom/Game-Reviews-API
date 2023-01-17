@@ -11,7 +11,6 @@ app.all("/*", (request, response) => {
 }); // if no endpoints are matched
 
 app.use((err, request, response, next) => {
-  console.log(err);
   response.status(err.status).send({ msg: err.msg });
 });
 
