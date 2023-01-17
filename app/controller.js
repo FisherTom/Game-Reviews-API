@@ -1,6 +1,6 @@
-const { selectCategories } = require("./model");
+const { selectCategories, selectReviews } = require("./model");
 
-function getCategories(request, response) {
+function getCategories(request, response, next) {
   selectCategories()
     .then((categories) => {
       response.status(200).send(categories);
@@ -10,4 +10,15 @@ function getCategories(request, response) {
     });
 }
 
-module.exports = { getCategories };
+function getReviews(request, response, next) {
+  selectReviews()
+    .then((reviews) => {
+      console.log(reviews);
+      response.status(200).send(reviews);
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+
+module.exports = { getCategories, getReviews };

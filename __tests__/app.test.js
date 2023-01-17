@@ -3,15 +3,12 @@ const seed = require("../db/seeds/seed");
 const request = require("supertest");
 const app = require("../app/app");
 const db = require("../db/connection");
-
 beforeEach(() => {
   return seed(data);
 });
-
 afterAll(() => {
   return db.end();
 });
-
 describe("GET requests", () => {
   ////////////// GET REQUESTS
   describe("/api/categories", () => {
@@ -30,8 +27,42 @@ describe("GET requests", () => {
         });
     });
   });
+  describe("/api/reviews", () => {
+    ////////////// /api/reviews
+    test("should respond with 200 & body with array of review objects", () => {
+      return request(app)
+        .get("/api/reviews")
+        .expect(200)
+        .then((response) => {
+          reviews = response.body;
+          expect(reviews.length).toBeGreaterThan(0);
+          reviews.forEach((review) => {
+            expect(review).toHaveProperty("owner");
+            expect(review).toHaveProperty("title");
+            expect(review).toHaveProperty("review_id");
+            expect(review).toHaveProperty("category");
+            expect(review).toHaveProperty("review_img_url");
+            expect(review).toHaveProperty("created_at");
+            expect(review).toHaveProperty("votes");
+            expect(review).toHaveProperty("designer");
+            expect(review).toHaveProperty("comment_count");
+          });
+        });
+    });
+    test("should return review objects sorted by date in descending order", () => {
+      /*
+        task calls to order by 'date' but there is 
+        no 'date' key so they are ordered by 'created_at'
+      */
+      return request(app)
+        .get("/api/reviews")
+        .then((response) => {
+          reviews = response.body;
+          expect(reviews).toBeSortedBy("created_at", { descending: true });
+        });
+    });
+  });
 });
-
 describe("ERRORS", () => {
   test("status:404, responds with an error message when passed a bad end point", () => {
     return request(app)
