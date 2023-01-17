@@ -34,16 +34,18 @@ describe("GET requests", () => {
           const reviews = response.body.reviews;
           expect(reviews.length).toBeGreaterThan(0);
           reviews.forEach((review) => {
-            expect(review).toHaveProperty("owner");
-            expect(review).toHaveProperty("title");
-            expect(review).toHaveProperty("review_id");
-            expect(review).toHaveProperty("category");
-            expect(review).toHaveProperty("review_img_url");
-            expect(review).toHaveProperty("created_at");
-            expect(review).toHaveProperty("votes");
-            expect(review).toHaveProperty("designer");
-            expect(review).toHaveProperty("review_body"); // /api/reviews should not return review body, but does currently
-            expect(review).toHaveProperty("comment_count");
+            expect(review).toMatchObject({
+              owner: expect.anything(),
+              title: expect.anything(),
+              review_id: expect.anything(),
+              review_body: expect.anything(),
+              category: expect.anything(),
+              review_img_url: expect.anything(),
+              created_at: expect.anything(),
+              votes: expect.anything(),
+              designer: expect.anything(),
+              comment_count: expect.anything(),
+            });
           });
         });
     });
@@ -63,15 +65,18 @@ describe("GET requests", () => {
         .expect(200)
         .then((response) => {
           const review = response.body.review;
-          expect(review).toHaveProperty("owner");
-          expect(review).toHaveProperty("title");
-          expect(review).toHaveProperty("review_id");
-          expect(review).toHaveProperty("review_body");
-          expect(review).toHaveProperty("category");
-          expect(review).toHaveProperty("review_img_url");
-          expect(review).toHaveProperty("created_at");
-          expect(review).toHaveProperty("votes");
-          expect(review).toHaveProperty("designer");
+
+          expect(review).toMatchObject({
+            owner: expect.anything(),
+            title: expect.anything(),
+            review_id: expect.anything(),
+            review_body: expect.anything(),
+            category: expect.anything(),
+            review_img_url: expect.anything(),
+            created_at: expect.anything(),
+            votes: expect.anything(),
+            designer: expect.anything(),
+          });
 
           expect(review.review_id).toBe(1);
         });
@@ -82,6 +87,14 @@ describe("GET requests", () => {
         .expect(404)
         .then((response) => {
           expect(response.body.msg).toBe("Review not found");
+        });
+    });
+    test("400: bad request when wrong datatype is used", () => {
+      return request(app)
+        .get(`/api/reviews/not_a_review_id`)
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Bad request");
         });
     });
   });

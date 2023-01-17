@@ -21,6 +21,8 @@ function selectReviews() {
 }
 
 function selectReviewById(reviewId) {
+  ////////////////insert reject promise clause for wrong datatype here
+
   const queryString = format(`SELECT * FROM reviews WHERE review_id=%L`, [
     reviewId,
   ]);
