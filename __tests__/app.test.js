@@ -10,15 +10,13 @@ afterAll(() => {
   return db.end();
 });
 describe("GET requests", () => {
-  ////////////// GET REQUESTS
   describe("/api/categories", () => {
-    ////////////// /api/categories
     test("should respond with 200 & body with array of categories", () => {
       return request(app)
         .get("/api/categories")
         .expect(200)
         .then((response) => {
-          categories = response.body;
+          const categories = response.body.categories;
           expect(categories.length).toBeGreaterThan(0);
           categories.forEach((category) => {
             expect(category).toHaveProperty("slug");
@@ -28,13 +26,12 @@ describe("GET requests", () => {
     });
   });
   describe("/api/reviews", () => {
-    ////////////// /api/reviews
     test("should respond with 200 & body with array of review objects", () => {
       return request(app)
         .get("/api/reviews")
         .expect(200)
         .then((response) => {
-          const reviews = response.body;
+          const reviews = response.body.reviews;
           expect(reviews.length).toBeGreaterThan(0);
           reviews.forEach((review) => {
             expect(review).toHaveProperty("owner");
@@ -49,15 +46,12 @@ describe("GET requests", () => {
           });
         });
     });
-    test("should return review objects sorted by date in descending order", () => {
-      /*
-        task calls to order by 'date' but there is 
-        no 'date' key so they are ordered by 'created_at'
-      */
+    test("should return review objects sorted by created_at in descending order", () => {
       return request(app)
         .get("/api/reviews")
         .then((response) => {
-          const reviews = response.body;
+          const reviews = response.body.reviews;
+          console.log(reviews);
           expect(reviews).toBeSortedBy("created_at", { descending: true });
         });
     });
