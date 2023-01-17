@@ -51,8 +51,42 @@ describe("GET requests", () => {
         .get("/api/reviews")
         .then((response) => {
           const reviews = response.body.reviews;
-          console.log(reviews);
           expect(reviews).toBeSortedBy("created_at", { descending: true });
+        });
+    });
+  });
+  describe.only("/api/reviews/:review_id/comments", () => {
+    test("should respond with 200 & body with comments associated to specified review", () => {
+      return request(app)
+        .get("/api/reviews/2/comments")
+        .expect(200)
+        .then((response) => {
+          const comments = response.body.comments;
+          expect(comments.length).toBeGreaterThan(0);
+          comments.forEach((comment) => {
+            expect(comment).toHaveProperty("comment_id");
+            expect(comment).toHaveProperty("votes");
+            expect(comment).toHaveProperty("created_at");
+            expect(comment).toHaveProperty("author");
+            expect(comment).toHaveProperty("body");
+            expect(comment).toHaveProperty("review_id");
+          });
+        });
+    });
+    test("should return comments sorted by created_at in descending order", () => {
+      return request(app)
+        .get("/api/reviews/2/comments")
+        .then((response) => {
+          const comments = response.body.comments;
+          expect(comments).toBeSortedBy("created_at", { descending: true });
+        });
+    });
+    test('404: "review not found" if given bad review id', () => {
+      return request(app)
+        .get("/api/reviews/10000/comments")
+        .expect(404)
+        .then((response) => {
+          expect(response.body.msg).toBe("Review not found");
         });
     });
   });
