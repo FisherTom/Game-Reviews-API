@@ -89,6 +89,14 @@ describe("GET requests", () => {
           expect(response.body.msg).toBe("Review not found");
         });
     });
+    test("400: bad request when wrong datatype is used", () => {
+      return request(app)
+        .get(`/api/reviews/not_a_review_id/comments`)
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Bad request");
+        });
+    });
   });
 });
 describe("ERRORS", () => {

@@ -21,6 +21,10 @@ function selectReviews() {
 }
 
 function selectComentsByReviewId(reviewId) {
+  if (/^\d+$/.test(reviewId) !== true) {
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  }
+
   const queryString = format(
     `SELECT * FROM comments WHERE review_id=%L ORDER BY created_at DESC`,
     [reviewId]
