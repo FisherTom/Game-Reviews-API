@@ -64,12 +64,14 @@ describe("GET requests", () => {
           const comments = response.body.comments;
           expect(comments.length).toBeGreaterThan(0);
           comments.forEach((comment) => {
-            expect(comment).toHaveProperty("comment_id");
-            expect(comment).toHaveProperty("votes");
-            expect(comment).toHaveProperty("created_at");
-            expect(comment).toHaveProperty("author");
-            expect(comment).toHaveProperty("body");
-            expect(comment).toHaveProperty("review_id");
+            expect(comment).toMatchObject({
+              comment_id: expect.anything(),
+              votes: expect.anything(),
+              created_at: expect.anything(),
+              body: expect.anything(),
+              author: expect.anything(),
+              review_id: expect.anything(),
+            });
           });
         });
     });
