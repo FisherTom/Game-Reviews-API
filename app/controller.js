@@ -13,7 +13,6 @@ function getCategories(request, response, next) {
 function getReviews(request, response, next) {
   selectReviews()
     .then((reviews) => {
-      console.log(reviews);
       response.status(200).send(reviews);
     })
     .catch((err) => {

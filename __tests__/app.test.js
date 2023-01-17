@@ -34,7 +34,7 @@ describe("GET requests", () => {
         .get("/api/reviews")
         .expect(200)
         .then((response) => {
-          reviews = response.body;
+          const reviews = response.body;
           expect(reviews.length).toBeGreaterThan(0);
           reviews.forEach((review) => {
             expect(review).toHaveProperty("owner");
@@ -57,7 +57,7 @@ describe("GET requests", () => {
       return request(app)
         .get("/api/reviews")
         .then((response) => {
-          reviews = response.body;
+          const reviews = response.body;
           expect(reviews).toBeSortedBy("created_at", { descending: true });
         });
     });

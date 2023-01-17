@@ -9,8 +9,8 @@ app.all("/*", (request, response) => {
   response.status(404).send({ msg: "Not Found" });
 }); // if no endpoints are matched
 
-// app.use((err, request, response, next) => {
-//   response.status(err.status).send(err.msg);
-// });
+app.use((err, request, response, next) => {
+  response.status(err.status).send(err.msg);
+});
 
 module.exports = app;
