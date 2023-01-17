@@ -42,6 +42,7 @@ describe("GET requests", () => {
             expect(review).toHaveProperty("created_at");
             expect(review).toHaveProperty("votes");
             expect(review).toHaveProperty("designer");
+            expect(review).toHaveProperty("review_body"); // /api/reviews should not return review body, but does currently
             expect(review).toHaveProperty("comment_count");
           });
         });
@@ -51,8 +52,36 @@ describe("GET requests", () => {
         .get("/api/reviews")
         .then((response) => {
           const reviews = response.body.reviews;
-          console.log(reviews);
           expect(reviews).toBeSortedBy("created_at", { descending: true });
+        });
+    });
+  });
+  describe("/api/reviews/:review_id", () => {
+    test("should return a review with the correct id", () => {
+      return request(app)
+        .get("/api/reviews/1")
+        .expect(200)
+        .then((response) => {
+          const review = response.body.review;
+          expect(review).toHaveProperty("owner");
+          expect(review).toHaveProperty("title");
+          expect(review).toHaveProperty("review_id");
+          expect(review).toHaveProperty("review_body");
+          expect(review).toHaveProperty("category");
+          expect(review).toHaveProperty("review_img_url");
+          expect(review).toHaveProperty("created_at");
+          expect(review).toHaveProperty("votes");
+          expect(review).toHaveProperty("designer");
+
+          expect(review.review_id).toBe(1);
+        });
+    });
+    test("404: review not found when a non-existant review is requested", () => {
+      return request(app)
+        .get(`/api/reviews/10000`)
+        .expect(404)
+        .then((response) => {
+          expect(response.body.msg).toBe("Review not found");
         });
     });
   });

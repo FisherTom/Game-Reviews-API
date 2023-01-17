@@ -1,3 +1,4 @@
+const format = require("pg-format");
 const db = require("../db/connection");
 
 function selectCategories() {
@@ -19,4 +20,17 @@ function selectReviews() {
   });
 }
 
-module.exports = { selectCategories, selectReviews };
+function selectReviewById(reviewId) {
+  const queryString = format(`SELECT * FROM reviews WHERE review_id=%L`, [
+    reviewId,
+  ]);
+  return db.query(queryString).then((result) => {
+    if (result.rows.length === 0) {
+      return Promise.reject({ status: 404, msg: "Review not found" });
+    } else {
+      return result.rows;
+    }
+  });
+}
+
+module.exports = { selectCategories, selectReviews, selectReviewById };
