@@ -55,7 +55,7 @@ describe("GET requests", () => {
         });
     });
   });
-  describe.only("/api/reviews/:review_id/comments", () => {
+  describe("/api/reviews/:review_id/comments", () => {
     test("should respond with 200 & body with comments associated to specified review", () => {
       return request(app)
         .get("/api/reviews/2/comments")
