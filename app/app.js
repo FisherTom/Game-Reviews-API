@@ -11,7 +11,23 @@ app.all("/*", (request, response) => {
 }); // if no endpoints are matched
 
 app.use((err, request, response, next) => {
-  response.status(err.status).send({ msg: err.msg });
+  if (err.status) {
+    response.status(err.status).send({ msg: err.msg });
+  } else {
+    next(err);
+  }
+});
+
+app.use((err, request, response, next) => {
+  if (err.code === "22P02") {
+    response.status(400).send({ msg: "Bad request" });
+  } else {
+    next(err);
+  }
+});
+
+app.use((err, request, response, next) => {
+  response.status(500).send({ msg: "internal sever error" });
 });
 
 module.exports = app;
