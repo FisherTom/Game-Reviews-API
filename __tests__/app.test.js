@@ -149,14 +149,25 @@ describe("GET requests", () => {
 describe("POST", () => {
   describe("/api/reviews/:review_id/comments", () => {
     test("201: respond with posted comment", () => {
+      const testComment = {
+        username: "dav3rid",
+        body: "Test Comment",
+      };
+
       return request(app)
         .post("/api/reviews/1/comments")
-        .send({
-          username: "Test User",
-          body: "Test Comment",
-        })
-        .expect(201);
-      //test to check response
+        .send(testComment)
+        .expect(201)
+        .then((response) => {
+          expect(response.body).toMatchObject({
+            author: "dav3rid",
+            body: "Test Comment",
+            comment_id: expect.any(Number),
+            created_at: expect.any(String),
+            review_id: 1,
+            votes: 0,
+          });
+        });
     });
   });
 });

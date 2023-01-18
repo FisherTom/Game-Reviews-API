@@ -54,8 +54,9 @@ function getReviewsById(request, response, next) {
 function postCommentByReviewId(request, response, next) {
   const reviewId = request.params.review_id;
   const body = request.body;
-  insertCommentByReviewId(reviewId, body);
-  response.status(201).send();
+  insertCommentByReviewId(reviewId, body).then((comment) => {
+    response.status(201).send(comment);
+  });
 }
 
 module.exports = {

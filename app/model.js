@@ -47,11 +47,14 @@ function selectReviewById(reviewId) {
   });
 }
 
-function insertCommentByReviewId(reviewId, body) {
-  /// will need to do some greenlisting
+function insertCommentByReviewId(reviewId, requestBody) {
+  const queryString = `INSERT INTO comments (body, author, review_id) 
+    VALUES ('${requestBody.body}','${requestBody.username}',${reviewId})
+    RETURNING *`;
 
-  const queryString = `INSERT INTO comments (body, votes, author, review_id, created_at) 
-    VALUES (${body.body}, 0, ${body.username}, ${reviewId}, ${new Date()})`;
+  return db.query(queryString).then((response) => {
+    return response.rows[0];
+  });
 }
 
 module.exports = {
