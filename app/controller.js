@@ -20,4 +20,6 @@ function getReviews(request, response, next) {
     });
 }
 
-module.exports = { getCategories, getReviews };
+function postCommentByReviewId() {}
+
+module.exports = { getCategories, getReviews, postCommentByReviewId };

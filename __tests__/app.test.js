@@ -57,6 +57,16 @@ describe("GET requests", () => {
     });
   });
 });
+// describe("POST", () => {
+//   describe("/api/reviews/:review_id/comments", () => {
+//     test("201: respond with posted comment", () => {
+//       return request(app)
+//         .post("/api/reviews/1/comments")
+//         .expect(201)
+//         .then((response) => {});
+//     });
+//   });
+// });
 describe("ERRORS", () => {
   test("status:404, responds with an error message when passed a bad end point", () => {
     return request(app)
