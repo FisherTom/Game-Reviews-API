@@ -1,7 +1,9 @@
+const comments = require("../db/data/test-data/comments");
 const {
   selectCategories,
   selectReviews,
   selectReviewById,
+  selectComentsByReviewId,
 } = require("./model");
 
 function getCategories(request, response, next) {
@@ -24,6 +26,17 @@ function getReviews(request, response, next) {
     });
 }
 
+function getCommentsByReviewId(request, response, next) {
+  const reviewId = request.params.review_id;
+  selectComentsByReviewId(reviewId)
+    .then((comments) => {
+      response.status(200).send({ comments });
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+
 function getReviewsById(request, response, next) {
   const reviewId = request.params.review_id;
 
@@ -37,4 +50,9 @@ function getReviewsById(request, response, next) {
     });
 }
 
-module.exports = { getCategories, getReviews, getReviewsById };
+module.exports = {
+  getCategories,
+  getReviews,
+  getCommentsByReviewId,
+  getReviewsById,
+};
