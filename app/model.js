@@ -47,9 +47,17 @@ function selectReviewById(reviewId) {
   });
 }
 
+function insertCommentByReviewId(reviewId, body) {
+  /// will need to do some greenlisting
+
+  const queryString = `INSERT INTO comments (body, votes, author, review_id, created_at) 
+    VALUES (${body.body}, 0, ${body.username}, ${reviewId}, ${new Date()})`;
+}
+
 module.exports = {
   selectCategories,
   selectReviews,
   selectComentsByReviewId,
   selectReviewById,
+  insertCommentByReviewId,
 };
