@@ -48,17 +48,15 @@ function selectReviewById(reviewId) {
 }
 
 function insertComment(reviewId, requestBody) {
-  if (requestBody.body === undefined) {
-    return Promise.reject({ status: 400, msg: "Bad request" });
-  }
-
   const queryString = `INSERT INTO comments (body, author, review_id) 
-    VALUES ('${requestBody.body}','${requestBody.username}',${reviewId})
+    VALUES ($1,$2,$3)
     RETURNING *`;
 
-  return db.query(queryString).then((result) => {
-    return result.rows[0];
-  });
+  return db
+    .query(queryString, [requestBody.body, requestBody.username, reviewId])
+    .then((result) => {
+      return result.rows[0];
+    });
 }
 
 module.exports = {

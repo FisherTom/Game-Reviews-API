@@ -185,10 +185,9 @@ describe("POST", () => {
     test('400: "Bad request" if no comment body', () => {
       const testComment = {
         username: "dav3rid",
-        body: "Test Comment",
       };
       return request(app)
-        .post("/api/reviews/10000/comments")
+        .post("/api/reviews/1/comments")
         .send(testComment)
         .expect(400)
         .then((response) => {
