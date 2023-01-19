@@ -3,6 +3,7 @@ const seed = require("../db/seeds/seed");
 const request = require("supertest");
 const app = require("../app/app");
 const db = require("../db/connection");
+const { getCommentsByReviewId } = require("../app/controller");
 beforeEach(() => {
   return seed(data);
 });
@@ -167,6 +168,15 @@ describe("POST", () => {
             review_id: 1,
             votes: 0,
           });
+        })
+        .then(() => {
+          // check comment is in the DB
+          return request(app)
+            .get("/api/reviews/1/comments")
+            .then((response) => {
+              const lastComment = response.body.comments[0].body;
+              expect(lastComment).toBe("Test Comment");
+            });
         });
     });
     test("201: ignores unnecasery properties in request body", () => {
@@ -215,6 +225,19 @@ describe("POST", () => {
         .expect(404)
         .then((response) => {
           expect(response.body.msg).toBe("Not found");
+        });
+    });
+    test('400: "Bad request" if given bad review id', () => {
+      const testComment = {
+        username: "dav3rid",
+        body: "Test Comment",
+      };
+      return request(app)
+        .post("/api/reviews/not_a_review_id/comments")
+        .send(testComment)
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Bad request");
         });
     });
     test('400: "Bad request" if no comment body', () => {
