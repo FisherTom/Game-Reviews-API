@@ -51,19 +51,6 @@ function getReviewsById(request, response, next) {
     });
 }
 
-function patchReviewVotes(request, response, next) {
-  const reviewId = request.params.review_id;
-  const incVotes = request.body.inc_votes;
-
-  updateReviewVotes(reviewId, incVotes)
-    .then((review) => {
-      response.status(200).send({ review });
-    })
-    .catch((err) => {
-      next(err);
-    });
-}
-
 function postComment(request, response, next) {
   const reviewId = request.params.review_id;
   const body = request.body;
@@ -71,6 +58,19 @@ function postComment(request, response, next) {
   insertComment(reviewId, body)
     .then((comment) => {
       response.status(201).send(comment);
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+
+function patchReviewVotes(request, response, next) {
+  const reviewId = request.params.review_id;
+  const incVotes = request.body.inc_votes;
+
+  updateReviewVotes(reviewId, incVotes)
+    .then((review) => {
+      response.status(200).send({ review });
     })
     .catch((err) => {
       next(err);
