@@ -47,7 +47,13 @@ function selectReviewById(reviewId) {
   });
 }
 
-function updateReviewVotes() {}
+function updateReviewVotes(reviewId, incVotes) {
+  const queryString = `UPDATE reviews SET votes = votes + $1 WHERE review_id = $2 RETURNING *;`;
+
+  return db.query(queryString, [incVotes, reviewId]).then((result) => {
+    return result.rows;
+  });
+}
 
 module.exports = {
   selectCategories,

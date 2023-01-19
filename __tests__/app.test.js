@@ -146,13 +146,26 @@ describe("GET requests", () => {
     });
   });
 });
-describe.skip("PATCH requests", () => {
-  describe("/api/reviews/:review_id (incrament votes)", () => {
+describe("PATCH requests", () => {
+  describe.skip("/api/reviews/:review_id (incrament votes)", () => {
     test("should incrament votes and return the updated review object", () => {
       return request(app)
-        .patch("/api/reviews/1")
+        .patch("/api/reviews/2")
         .send({ inc_votes: 1 })
-        .expect(200);
+        .expect(200)
+        .then((response) => {
+          expect(response).toMatchObject({
+            review_id: 2,
+            title: expect.any(String),
+            category: expect.any(String),
+            designer: expect.any(String),
+            owner: expect.any(String),
+            review_body: expect.any(String),
+            review_img_url: expect.any(String),
+            created_at: expect.anything(),
+            votes: 6,
+          });
+        });
     });
   });
 });

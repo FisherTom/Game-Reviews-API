@@ -52,8 +52,17 @@ function getReviewsById(request, response, next) {
 }
 
 function patchReviewVotes(request, response, next) {
-  console.log(request.body);
-  updateReviewVotes();
+  const reviewId = request.params.review_id;
+  const incVotes = request.body.inc_votes;
+
+  updateReviewVotes(reviewId, incVotes)
+    .then((review) => {
+      console.log(review);
+      response.status(200).send({ review: { review } });
+    })
+    .catch((err) => {
+      next(err);
+    });
 }
 
 module.exports = {
