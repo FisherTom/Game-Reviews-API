@@ -169,7 +169,29 @@ describe("POST", () => {
           });
         });
     });
-    test('400: "Bad request" if given bad review id', () => {
+    test("201: ignores unnecasery properties in request body", () => {
+      const testComment = {
+        username: "dav3rid",
+        body: "Test Comment",
+        unnecasery: "why?",
+      };
+
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send(testComment)
+        .expect(201)
+        .then((response) => {
+          expect(response.body).toMatchObject({
+            author: "dav3rid",
+            body: "Test Comment",
+            comment_id: expect.any(Number),
+            created_at: expect.any(String),
+            review_id: 1,
+            votes: 0,
+          });
+        });
+    });
+    test('404: "Not found" if nonexistant review id', () => {
       const testComment = {
         username: "dav3rid",
         body: "Test Comment",
@@ -177,9 +199,22 @@ describe("POST", () => {
       return request(app)
         .post("/api/reviews/10000/comments")
         .send(testComment)
-        .expect(400)
+        .expect(404)
         .then((response) => {
-          expect(response.body.msg).toBe("Bad request");
+          expect(response.body.msg).toBe("Not found");
+        });
+    });
+    test('404: "Not found" if given nonexistant username', () => {
+      const testComment = {
+        username: "not_a_username",
+        body: "Test Comment",
+      };
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send(testComment)
+        .expect(404)
+        .then((response) => {
+          expect(response.body.msg).toBe("Not found");
         });
     });
     test('400: "Bad request" if no comment body', () => {
@@ -188,19 +223,6 @@ describe("POST", () => {
       };
       return request(app)
         .post("/api/reviews/1/comments")
-        .send(testComment)
-        .expect(400)
-        .then((response) => {
-          expect(response.body.msg).toBe("Bad request");
-        });
-    });
-    test('400: "Bad request" if given nonexistant username', () => {
-      const testComment = {
-        username: "not_a_username",
-        body: "Test Comment",
-      };
-      return request(app)
-        .post("/api/reviews/10000/comments")
         .send(testComment)
         .expect(400)
         .then((response) => {
