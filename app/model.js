@@ -47,13 +47,17 @@ function selectReviewById(reviewId) {
   });
 }
 
-function insertCommentByReviewId(reviewId, requestBody) {
+function insertComment(reviewId, requestBody) {
+  if (requestBody.body === undefined) {
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  }
+
   const queryString = `INSERT INTO comments (body, author, review_id) 
     VALUES ('${requestBody.body}','${requestBody.username}',${reviewId})
     RETURNING *`;
 
-  return db.query(queryString).then((response) => {
-    return response.rows[0];
+  return db.query(queryString).then((result) => {
+    return result.rows[0];
   });
 }
 
@@ -62,5 +66,5 @@ module.exports = {
   selectReviews,
   selectComentsByReviewId,
   selectReviewById,
-  insertCommentByReviewId,
+  insertComment,
 };

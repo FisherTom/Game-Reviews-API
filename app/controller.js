@@ -4,7 +4,7 @@ const {
   selectReviews,
   selectReviewById,
   selectComentsByReviewId,
-  insertCommentByReviewId,
+  insertComment,
 } = require("./model");
 
 function getCategories(request, response, next) {
@@ -43,7 +43,6 @@ function getReviewsById(request, response, next) {
 
   selectReviewById(reviewId)
     .then((review) => {
-      //console.log(review);
       response.status(200).send({ review: review[0] });
     })
     .catch((err) => {
@@ -51,12 +50,16 @@ function getReviewsById(request, response, next) {
     });
 }
 
-function postCommentByReviewId(request, response, next) {
+function postComment(request, response, next) {
   const reviewId = request.params.review_id;
   const body = request.body;
-  insertCommentByReviewId(reviewId, body).then((comment) => {
-    response.status(201).send(comment);
-  });
+  insertComment(reviewId, body)
+    .then((comment) => {
+      response.status(201).send(comment);
+    })
+    .catch((err) => {
+      next(err);
+    });
 }
 
 module.exports = {
@@ -64,5 +67,5 @@ module.exports = {
   getReviews,
   getCommentsByReviewId,
   getReviewsById,
-  postCommentByReviewId,
+  postComment,
 };

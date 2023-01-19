@@ -169,6 +169,45 @@ describe("POST", () => {
           });
         });
     });
+    test('400: "Bad request" if given bad review id', () => {
+      const testComment = {
+        username: "dav3rid",
+        body: "Test Comment",
+      };
+      return request(app)
+        .post("/api/reviews/10000/comments")
+        .send(testComment)
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Bad request");
+        });
+    });
+    test('400: "Bad request" if no comment body', () => {
+      const testComment = {
+        username: "dav3rid",
+        body: "Test Comment",
+      };
+      return request(app)
+        .post("/api/reviews/10000/comments")
+        .send(testComment)
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Bad request");
+        });
+    });
+    test('400: "Bad request" if given nonexistant username', () => {
+      const testComment = {
+        username: "not_a_username",
+        body: "Test Comment",
+      };
+      return request(app)
+        .post("/api/reviews/10000/comments")
+        .send(testComment)
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Bad request");
+        });
+    });
   });
 });
 describe("ERRORS", () => {

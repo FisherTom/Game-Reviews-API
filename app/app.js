@@ -6,7 +6,7 @@ const {
   getReviews,
   getReviewsById,
   getCommentsByReviewId,
-  postCommentByReviewId,
+  postComment,
 } = require("./controller");
 
 app.use(express.json());
@@ -15,7 +15,7 @@ app.get("/api/categories", getCategories);
 app.get("/api/reviews", getReviews);
 app.get("/api/reviews/:review_id", getReviewsById);
 app.get("/api/reviews/:review_id/comments", getCommentsByReviewId);
-app.post("/api/reviews/:review_id/comments", postCommentByReviewId);
+app.post("/api/reviews/:review_id/comments", postComment);
 
 app.all("/*", (request, response) => {
   response.status(404).send({ msg: "Not Found" });
@@ -30,7 +30,7 @@ app.use((err, request, response, next) => {
 });
 
 app.use((err, request, response, next) => {
-  if (err.code === "22P02") {
+  if (err.code === "22P02" || "23503") {
     response.status(400).send({ msg: "Bad request" });
   } else {
     next(err);
@@ -38,6 +38,7 @@ app.use((err, request, response, next) => {
 });
 
 app.use((err, request, response, next) => {
+  console.log(err);
   response.status(500).send({ msg: "internal sever error" });
 });
 
