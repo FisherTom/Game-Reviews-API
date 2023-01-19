@@ -47,9 +47,26 @@ function selectReviewById(reviewId) {
   });
 }
 
+function insertComment(reviewId, requestBody) {
+  const queryString = `INSERT INTO comments (body, author, review_id) 
+    VALUES ($1,$2,$3)
+    RETURNING *`;
+
+  return db
+    .query(queryString, [requestBody.body, requestBody.username, reviewId])
+    .then((result) => {
+      if (result.rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "Not found" });
+      } else {
+        return result.rows[0];
+      }
+    });
+}
+
 module.exports = {
   selectCategories,
   selectReviews,
   selectComentsByReviewId,
   selectReviewById,
+  insertComment,
 };

@@ -6,35 +6,30 @@ const {
   getReviews,
   getReviewsById,
   getCommentsByReviewId,
+  postComment,
 } = require("./controller");
+
+const {
+  endPointNotFound,
+  customError,
+  postgresError,
+  internalServerError,
+} = require("./error-handlers");
+
+app.use(express.json());
 
 app.get("/api/categories", getCategories);
 app.get("/api/reviews", getReviews);
 app.get("/api/reviews/:review_id", getReviewsById);
 app.get("/api/reviews/:review_id/comments", getCommentsByReviewId);
+app.post("/api/reviews/:review_id/comments", postComment);
 
-app.all("/*", (request, response) => {
-  response.status(404).send({ msg: "Not Found" });
-}); // if no endpoints are matched
+app.all("/*", endPointNotFound); // if no endpoints are matched
 
-app.use((err, request, response, next) => {
-  if (err.status) {
-    response.status(err.status).send({ msg: err.msg });
-  } else {
-    next(err);
-  }
-});
+app.use(customError);
 
-app.use((err, request, response, next) => {
-  if (err.code === "22P02") {
-    response.status(400).send({ msg: "Bad request" });
-  } else {
-    next(err);
-  }
-});
+app.use(postgresError);
 
-app.use((err, request, response, next) => {
-  response.status(500).send({ msg: "internal sever error" });
-});
+app.use(internalServerError);
 
 module.exports = app;

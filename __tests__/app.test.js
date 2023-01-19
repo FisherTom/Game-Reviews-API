@@ -3,6 +3,7 @@ const seed = require("../db/seeds/seed");
 const request = require("supertest");
 const app = require("../app/app");
 const db = require("../db/connection");
+const { getCommentsByReviewId } = require("../app/controller");
 beforeEach(() => {
   return seed(data);
 });
@@ -139,6 +140,113 @@ describe("GET requests", () => {
     test("400: bad request when wrong datatype is used", () => {
       return request(app)
         .get(`/api/reviews/not_a_review_id/comments`)
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Bad request");
+        });
+    });
+  });
+});
+describe("POST", () => {
+  describe("/api/reviews/:review_id/comments", () => {
+    test("201: respond with posted comment", () => {
+      const testComment = {
+        username: "dav3rid",
+        body: "Test Comment",
+      };
+
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send(testComment)
+        .expect(201)
+        .then((response) => {
+          expect(response.body).toMatchObject({
+            author: "dav3rid",
+            body: "Test Comment",
+            comment_id: expect.any(Number),
+            created_at: expect.any(String),
+            review_id: 1,
+            votes: 0,
+          });
+        })
+        .then(() => {
+          // check comment is in the DB
+          return request(app)
+            .get("/api/reviews/1/comments")
+            .then((response) => {
+              const lastComment = response.body.comments[0].body;
+              expect(lastComment).toBe("Test Comment");
+            });
+        });
+    });
+    test("201: ignores unnecasery properties in request body", () => {
+      const testComment = {
+        username: "dav3rid",
+        body: "Test Comment",
+        unnecasery: "why?",
+      };
+
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send(testComment)
+        .expect(201)
+        .then((response) => {
+          expect(response.body).toMatchObject({
+            author: "dav3rid",
+            body: "Test Comment",
+            comment_id: expect.any(Number),
+            created_at: expect.any(String),
+            review_id: 1,
+            votes: 0,
+          });
+        });
+    });
+    test('404: "Not found" if nonexistant review id', () => {
+      const testComment = {
+        username: "dav3rid",
+        body: "Test Comment",
+      };
+      return request(app)
+        .post("/api/reviews/10000/comments")
+        .send(testComment)
+        .expect(404)
+        .then((response) => {
+          expect(response.body.msg).toBe("Not found");
+        });
+    });
+    test('404: "Not found" if given nonexistant username', () => {
+      const testComment = {
+        username: "not_a_username",
+        body: "Test Comment",
+      };
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send(testComment)
+        .expect(404)
+        .then((response) => {
+          expect(response.body.msg).toBe("Not found");
+        });
+    });
+    test('400: "Bad request" if given bad review id', () => {
+      const testComment = {
+        username: "dav3rid",
+        body: "Test Comment",
+      };
+      return request(app)
+        .post("/api/reviews/not_a_review_id/comments")
+        .send(testComment)
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Bad request");
+        });
+    });
+    test('400: "Bad request" if no comment body', () => {
+      const testComment = {
+        username: "dav3rid",
+      };
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send(testComment)
         .expect(400)
         .then((response) => {
           expect(response.body.msg).toBe("Bad request");
