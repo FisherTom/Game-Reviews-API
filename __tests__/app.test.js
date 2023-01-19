@@ -147,14 +147,15 @@ describe("GET requests", () => {
   });
 });
 describe("PATCH requests", () => {
-  describe.skip("/api/reviews/:review_id (incrament votes)", () => {
+  describe("/api/reviews/:review_id (incrament votes)", () => {
     test("should incrament votes and return the updated review object", () => {
       return request(app)
         .patch("/api/reviews/2")
         .send({ inc_votes: 1 })
         .expect(200)
         .then((response) => {
-          expect(response).toMatchObject({
+          const review = response.body.review;
+          expect(review).toMatchObject({
             review_id: 2,
             title: expect.any(String),
             category: expect.any(String),
@@ -179,3 +180,6 @@ describe("ERRORS", () => {
       });
   });
 });
+
+// incvotes errors: no incvotes, minus, NaN
+//rev_id: valid out of scope, invalid

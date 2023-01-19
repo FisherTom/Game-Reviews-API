@@ -44,7 +44,7 @@ function getReviewsById(request, response, next) {
   selectReviewById(reviewId)
     .then((review) => {
       //console.log(review);
-      response.status(200).send({ review: review[0] });
+      response.status(200).send({ review: review });
     })
     .catch((err) => {
       next(err);
@@ -57,8 +57,7 @@ function patchReviewVotes(request, response, next) {
 
   updateReviewVotes(reviewId, incVotes)
     .then((review) => {
-      console.log(review);
-      response.status(200).send({ review: { review } });
+      response.status(200).send({ review });
     })
     .catch((err) => {
       next(err);
