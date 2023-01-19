@@ -4,6 +4,7 @@ const {
   selectReviews,
   selectReviewById,
   selectComentsByReviewId,
+  updateReviewVotes,
 } = require("./model");
 
 function getCategories(request, response, next) {
@@ -50,9 +51,15 @@ function getReviewsById(request, response, next) {
     });
 }
 
+function patchReviewVotes(request, response, next) {
+  console.log(request.body);
+  updateReviewVotes();
+}
+
 module.exports = {
   getCategories,
   getReviews,
   getCommentsByReviewId,
   getReviewsById,
+  patchReviewVotes,
 };

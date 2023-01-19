@@ -47,9 +47,12 @@ function selectReviewById(reviewId) {
   });
 }
 
+function updateReviewVotes() {}
+
 module.exports = {
   selectCategories,
   selectReviews,
   selectComentsByReviewId,
   selectReviewById,
+  updateReviewVotes,
 };

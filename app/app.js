@@ -6,16 +6,18 @@ const {
   getReviews,
   getReviewsById,
   getCommentsByReviewId,
+  patchReviewVotes,
 } = require("./controller");
 
 app.get("/api/categories", getCategories);
 app.get("/api/reviews", getReviews);
 app.get("/api/reviews/:review_id", getReviewsById);
 app.get("/api/reviews/:review_id/comments", getCommentsByReviewId);
+app.patch("/api/reviews/:review_id", patchReviewVotes); //not a descriptive endpoint
 
 app.all("/*", (request, response) => {
   response.status(404).send({ msg: "Not Found" });
-}); // if no endpoints are matched
+});
 
 app.use((err, request, response, next) => {
   if (err.status) {

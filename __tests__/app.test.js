@@ -146,6 +146,16 @@ describe("GET requests", () => {
     });
   });
 });
+describe.skip("PATCH requests", () => {
+  describe("/api/reviews/:review_id (incrament votes)", () => {
+    test("should incrament votes and return the updated review object", () => {
+      return request(app)
+        .patch("/api/reviews/1")
+        .send({ inc_votes: 1 })
+        .expect(200);
+    });
+  });
+});
 describe("ERRORS", () => {
   test("status:404, responds with an error message when passed a bad end point", () => {
     return request(app)
