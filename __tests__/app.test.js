@@ -147,6 +147,24 @@ describe("GET requests", () => {
         });
     });
   });
+  describe("/api/users", () => {
+    test("200: response body contains array of user objects", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then((response) => {
+          const users = response.body.users;
+          expect(users.length).toBeGreaterThan(0);
+          users.forEach((user) => {
+            expect(user).toMatchObject({
+              username: expect.any(String),
+              name: expect.any(String),
+              avatar_url: expect.any(String),
+            });
+          });
+        });
+    });
+  });
 });
 
 describe("POST", () => {

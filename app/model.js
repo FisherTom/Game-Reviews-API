@@ -8,6 +8,13 @@ function selectCategories() {
   });
 }
 
+function selectUsers() {
+  const queryString = "SELECT * FROM users";
+  return db.query(queryString).then((result) => {
+    return result.rows;
+  });
+}
+
 function selectReviews() {
   const queryString = `SELECT reviews.*, COUNT(comments.comment_id) AS comment_count
   FROM reviews
@@ -82,4 +89,5 @@ module.exports = {
   selectReviewById,
   insertComment,
   updateReviewVotes,
+  selectUsers,
 };
