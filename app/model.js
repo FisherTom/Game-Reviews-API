@@ -15,14 +15,51 @@ function selectUsers() {
   });
 }
 
-function selectReviews() {
-  const queryString = `SELECT reviews.*, COUNT(comments.comment_id) AS comment_count
-  FROM reviews
-  LEFT JOIN comments ON comments.review_id = reviews.review_id
-  GROUP BY reviews.review_id
-  ORDER BY created_at DESC`;
+function selectReviews(
+  category,
+  sortBy = `created_at`,
+  order = `DESC`,
+  dbCategories
+) {
+  const sortByGreenList = [
+    `owner`,
+    `title`,
+    `review_id`,
+    `category`,
+    `created_at`,
+    `votes`,
+    `designer`,
+    `comment_count`,
+  ];
 
-  return db.query(queryString).then((result) => {
+  if (!sortByGreenList.includes(sortBy)) {
+    return Promise.reject({ status: 400, msg: "Invalid sort query" });
+  }
+  if (![`ASC`, `DESC`].includes(order)) {
+    return Promise.reject({ status: 400, msg: "Invalid order query" });
+  }
+
+  let queries = [];
+
+  let queryString = `SELECT reviews.*, COUNT(comments.comment_id) AS comment_count
+  FROM reviews
+  LEFT JOIN comments ON comments.review_id = reviews.review_id`;
+
+  if (category) {
+    queryString += ` WHERE reviews.category = $1`;
+    queries.push(category);
+  }
+
+  queryString += ` GROUP BY reviews.review_id ORDER BY ${sortBy} ${order}`;
+
+  return db.query(queryString, queries).then((result) => {
+    if (result.rows.length === 0) {
+      if (dbCategories.includes(category)) {
+        return [];
+      } else {
+        return Promise.reject({ status: 404, msg: "Not found" });
+      }
+    }
     return result.rows;
   });
 }
