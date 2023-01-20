@@ -3,13 +3,14 @@ const seed = require("../db/seeds/seed");
 const request = require("supertest");
 const app = require("../app/app");
 const db = require("../db/connection");
-const { getCommentsByReviewId } = require("../app/controller");
+
 beforeEach(() => {
   return seed(data);
 });
 afterAll(() => {
   return db.end();
 });
+
 describe("GET requests", () => {
   describe("/api/categories", () => {
     test("should respond with 200 & body with array of categories", () => {
@@ -147,6 +148,7 @@ describe("GET requests", () => {
     });
   });
 });
+
 describe("POST", () => {
   describe("/api/reviews/:review_id/comments", () => {
     test("201: respond with posted comment", () => {
@@ -254,6 +256,101 @@ describe("POST", () => {
     });
   });
 });
+describe("PATCH requests", () => {
+  describe("/api/reviews/:review_id (incrament votes)", () => {
+    test("should incrament votes, update the table and return the updated review object", () => {
+      return request(app)
+        .patch("/api/reviews/2")
+        .send({ inc_votes: 1 })
+        .expect(200)
+        .then((response) => {
+          const review = response.body.review;
+          expect(review).toMatchObject({
+            review_id: 2,
+            title: expect.any(String),
+            category: expect.any(String),
+            designer: expect.any(String),
+            owner: expect.any(String),
+            review_body: expect.any(String),
+            review_img_url: expect.any(String),
+            created_at: expect.any(String),
+            votes: 6,
+          });
+        })
+        .then(() => {
+          return request(app)
+            .get("/api/reviews/2")
+            .then((response) => {
+              expect(response.body.review.votes).toBe(6);
+            });
+        }); //check its actually in the DB
+    });
+    test("should reduce votes given a negative value, update the table and return the updated review object", () => {
+      return request(app)
+        .patch("/api/reviews/2")
+        .send({ inc_votes: -2 })
+        .expect(200)
+        .then((response) => {
+          const review = response.body.review;
+          expect(review).toMatchObject({
+            review_id: 2,
+            title: expect.any(String),
+            category: expect.any(String),
+            designer: expect.any(String),
+            owner: expect.any(String),
+            review_body: expect.any(String),
+            review_img_url: expect.any(String),
+            created_at: expect.anything(),
+            votes: 3,
+          });
+        })
+        .then(() => {
+          return request(app)
+            .get("/api/reviews/2")
+            .then((response) => {
+              expect(response.body.review.votes).toBe(3);
+            });
+        }); //check its actually in the DB
+    });
+    test("400: 'Bad request' if sent NaN value", () => {
+      return request(app)
+        .patch("/api/reviews/2")
+        .send({ inc_votes: "Parmesan" })
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Bad request");
+        });
+    });
+    test("400: 'Bad request' if no request body", () => {
+      return request(app)
+        .patch("/api/reviews/2")
+        .send()
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Bad request");
+        });
+    });
+    test('404: "Not found" if given a nonexistant review id', () => {
+      return request(app)
+        .patch("/api/reviews/20000")
+        .send({ inc_votes: -2 })
+        .expect(404)
+        .then((response) => {
+          expect(response.body.msg).toBe("Not found");
+        });
+    });
+    test('400: "Bad request" if review id is not valid', () => {
+      return request(app)
+        .patch("/api/reviews/not_a_review_id")
+        .send({ inc_votes: -2 })
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Bad request");
+        });
+    });
+  });
+});
+
 describe("ERRORS", () => {
   test("status:404, responds with an error message when passed a bad end point", () => {
     return request(app)
