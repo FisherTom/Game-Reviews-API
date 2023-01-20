@@ -24,7 +24,13 @@ function getReviews(request, response, next) {
   const sortBy = request.query.sort_by;
   const order = request.query.order;
 
-  selectReviews(category, sortBy, order)
+  selectCategories()
+    .then((result) => {
+      return result.map((dbCategory) => dbCategory.slug);
+    })
+    .then((dbCategories) => {
+      return selectReviews(category, sortBy, order, dbCategories);
+    })
     .then((reviews) => {
       response.status(200).send({ reviews });
     })

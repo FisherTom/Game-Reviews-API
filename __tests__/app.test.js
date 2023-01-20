@@ -74,6 +74,7 @@ describe("GET requests", () => {
     test("should accept a sort_by query to sort results by selected collumn", () => {
       return request(app)
         .get("/api/reviews?sort_by=votes")
+        .expect(200)
         .then((response) => {
           const reviews = response.body.reviews;
           expect(reviews.length).toBeGreaterThan(0);
@@ -83,6 +84,7 @@ describe("GET requests", () => {
     test("should accept an order query to order results in ascending order", () => {
       return request(app)
         .get("/api/reviews?order=ASC")
+        .expect(200)
         .then((response) => {
           const reviews = response.body.reviews;
           expect(reviews.length).toBeGreaterThan(0);
@@ -92,6 +94,7 @@ describe("GET requests", () => {
     test("should accept a category, sort_by and order query and respond with data in correct format", () => {
       return request(app)
         .get("/api/reviews?category=social deduction&sort_by=votes&order=ASC")
+        .expect(200)
         .then((response) => {
           const reviews = response.body.reviews;
           expect(reviews.length).toBeGreaterThan(0);
@@ -123,6 +126,14 @@ describe("GET requests", () => {
         .expect(404)
         .then((response) => {
           expect(response.body.msg).toBe("Not found");
+        });
+    });
+    test("200: returns empty array if given category with no reviews", () => {
+      return request(app)
+        .get("/api/reviews?category=children's games")
+        .expect(200)
+        .then((response) => {
+          expect(response.body.reviews).toEqual([]);
         });
     });
   });

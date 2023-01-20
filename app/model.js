@@ -15,7 +15,12 @@ function selectUsers() {
   });
 }
 
-function selectReviews(category, sortBy = `created_at`, order = `DESC`) {
+function selectReviews(
+  category,
+  sortBy = `created_at`,
+  order = `DESC`,
+  dbCategories
+) {
   const sortByGreenList = [
     `owner`,
     `title`,
@@ -49,7 +54,11 @@ function selectReviews(category, sortBy = `created_at`, order = `DESC`) {
 
   return db.query(queryString, queries).then((result) => {
     if (result.rows.length === 0) {
-      return Promise.reject({ status: 404, msg: "Not found" });
+      if (dbCategories.includes(category)) {
+        return [];
+      } else {
+        return Promise.reject({ status: 404, msg: "Not found" });
+      }
     }
     return result.rows;
   });
