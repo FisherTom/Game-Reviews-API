@@ -59,6 +59,18 @@ describe("GET requests", () => {
           expect(reviews).toBeSortedBy("created_at", { descending: true });
         });
     });
+    test.skip("should accept query", () => {
+      return request(app)
+        .get("/api/reviews?category=dexterity")
+        .expect(200)
+        .then((response) => {
+          const reviews = response.body.reviews;
+          expect(reviews.length).toBeGreaterThan(0);
+          reviews.forEach((review) => {
+            expect(review.category).toBe("dexterity");
+          });
+        });
+    });
   });
 
   describe("/api/reviews/:review_id", () => {

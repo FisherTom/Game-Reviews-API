@@ -19,7 +19,8 @@ function getCategories(request, response, next) {
 }
 
 function getReviews(request, response, next) {
-  selectReviews()
+  const category = request.query.category;
+  selectReviews(category)
     .then((reviews) => {
       response.status(200).send({ reviews });
     })

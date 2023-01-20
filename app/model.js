@@ -8,7 +8,20 @@ function selectCategories() {
   });
 }
 
-function selectReviews() {
+// function selectReviews(category) {
+//   const queryString = `SELECT reviews.*, COUNT(comments.comment_id) AS comment_count
+//   FROM reviews
+//   LEFT JOIN comments ON comments.review_id = reviews.review_id
+//   WHERE reviews.category = $1
+//   GROUP BY reviews.review_id
+//   ORDER BY created_at DESC`;
+
+//   return db.query(queryString, [category]).then((result) => {
+//     return result.rows;
+//   });
+// }
+
+function selectReviews(category) {
   const queryString = `SELECT reviews.*, COUNT(comments.comment_id) AS comment_count
   FROM reviews
   LEFT JOIN comments ON comments.review_id = reviews.review_id
