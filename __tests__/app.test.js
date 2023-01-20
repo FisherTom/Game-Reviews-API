@@ -51,7 +51,7 @@ describe("GET requests", () => {
           });
         });
     });
-    test("should return review objects sorted by created_at in descending order", () => {
+    test("should return review objects sorted by created_at in descending order by default", () => {
       return request(app)
         .get("/api/reviews")
         .then((response) => {
@@ -59,7 +59,7 @@ describe("GET requests", () => {
           expect(reviews).toBeSortedBy("created_at", { descending: true });
         });
     });
-    test.skip("should accept query", () => {
+    test("should accept category search query and respond with only reviews of that category", () => {
       return request(app)
         .get("/api/reviews?category=dexterity")
         .expect(200)
@@ -69,6 +69,60 @@ describe("GET requests", () => {
           reviews.forEach((review) => {
             expect(review.category).toBe("dexterity");
           });
+        });
+    });
+    test("should accept a sort_by query to sort results by selected collumn", () => {
+      return request(app)
+        .get("/api/reviews?sort_by=votes")
+        .then((response) => {
+          const reviews = response.body.reviews;
+          expect(reviews.length).toBeGreaterThan(0);
+          expect(reviews).toBeSortedBy("votes", { descending: true });
+        });
+    });
+    test("should accept an order query to order results in ascending order", () => {
+      return request(app)
+        .get("/api/reviews?order=ASC")
+        .then((response) => {
+          const reviews = response.body.reviews;
+          expect(reviews.length).toBeGreaterThan(0);
+          expect(reviews).toBeSortedBy("created_at", { ascending: true });
+        });
+    });
+    test("should accept a category, sort_by and order query and respond with data in correct format", () => {
+      return request(app)
+        .get("/api/reviews?category=social deduction&sort_by=votes&order=ASC")
+        .then((response) => {
+          const reviews = response.body.reviews;
+          expect(reviews.length).toBeGreaterThan(0);
+          expect(reviews).toBeSortedBy("votes", { ascending: true });
+          reviews.forEach((review) => {
+            expect(review.category).toBe("social deduction");
+          });
+        });
+    });
+    test('400: "Invalid sort query" if sort query is not on green list', () => {
+      return request(app)
+        .get("/api/reviews?sort_by=im_a_hacker")
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Invalid sort query");
+        });
+    });
+    test('400: "Invalid order query" if order query is not on green list', () => {
+      return request(app)
+        .get("/api/reviews?order=im_a_hacker")
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Invalid order query");
+        });
+    });
+    test('404: "Not found" if given non existant category', () => {
+      return request(app)
+        .get("/api/reviews?category=not_a_category")
+        .expect(404)
+        .then((response) => {
+          expect(response.body.msg).toBe("Not found");
         });
     });
   });
@@ -156,6 +210,24 @@ describe("GET requests", () => {
         .expect(400)
         .then((response) => {
           expect(response.body.msg).toBe("Bad request");
+        });
+    });
+  });
+  describe("/api/users", () => {
+    test("200: response body contains array of user objects", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then((response) => {
+          const users = response.body.users;
+          expect(users.length).toBeGreaterThan(0);
+          users.forEach((user) => {
+            expect(user).toMatchObject({
+              username: expect.any(String),
+              name: expect.any(String),
+              avatar_url: expect.any(String),
+            });
+          });
         });
     });
   });
