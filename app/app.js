@@ -9,6 +9,7 @@ const {
   patchReviewVotes,
   postComment,
   getUsers,
+  getInfo,
 } = require("./controller");
 
 const {
@@ -20,6 +21,7 @@ const {
 
 app.use(express.json());
 
+app.get("/api", getInfo);
 app.get("/api/users", getUsers);
 app.get("/api/categories", getCategories);
 app.get("/api/reviews", getReviews);

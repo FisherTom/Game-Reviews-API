@@ -1,4 +1,3 @@
-const format = require("pg-format");
 const db = require("../db/connection");
 
 function selectCategories() {
@@ -65,11 +64,8 @@ function selectReviews(
 }
 
 function selectComentsByReviewId(reviewId) {
-  const queryString = format(
-    `SELECT * FROM comments WHERE review_id=%L ORDER BY created_at DESC`,
-    [reviewId]
-  );
-  return db.query(queryString).then((result) => {
+  const queryString = `SELECT * FROM comments WHERE review_id=$1 ORDER BY created_at DESC`;
+  return db.query(queryString, [reviewId]).then((result) => {
     if (result.rows.length === 0) {
       return Promise.reject({ status: 404, msg: "Review not found" });
     } else {
@@ -79,10 +75,8 @@ function selectComentsByReviewId(reviewId) {
 }
 
 function selectReviewById(reviewId) {
-  const queryString = format(`SELECT * FROM reviews WHERE review_id=%L`, [
-    reviewId,
-  ]);
-  return db.query(queryString).then((result) => {
+  const queryString = `SELECT * FROM reviews WHERE review_id=$1`;
+  return db.query(queryString, [reviewId]).then((result) => {
     if (result.rows.length === 0) {
       return Promise.reject({ status: 404, msg: "Review not found" });
     } else {

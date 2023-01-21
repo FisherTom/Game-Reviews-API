@@ -1,6 +1,8 @@
 # House of Games API
 
-## Setup
+### Link to hosted API - https://game-reviews-k7fw.onrender.com/api
+
+# Setup
 
 If you are cloning this repo before you run it localy you will need to create a ".env.development" and a ".env.test" file to connect to your production / test databases respectivly. These files should contain a script to set the database to be used for example:
 
@@ -8,14 +10,57 @@ If you are cloning this repo before you run it localy you will need to create a 
 PGDATABASE=<'database name'>
 ```
 
-## task 3 /api/categories
+# Endpoints
 
-Responds with:
+## GET requests
 
-- an array of category objects, each of which should have the following properties:
-  - `slug`
-  - `description`
+- ### /api
+- ### /api/reviews
+- ### /api/reviews/:review_id
+- ### /api/reviews/:review_id/comments
+- ### /api/categories
+- ### /api/users
 
-As this is the first endpoint you will need to set up your testing suite.
+## POST requests
 
-Errors handled.
+- ### /api/reviews/:review_id/comments
+
+## PATCH requests
+
+- ### /api/reviews/:review_id/votes
+
+# Tables
+
+## Reviews
+
+- title
+- designer
+- owner
+- review_img_url
+- review_body
+- category
+- created_at
+- votes
+
+## Categories
+
+- slug (category name)
+- description
+
+## Users
+
+- username
+- name
+- avatar_url
+
+## Comments
+
+- body
+- votes
+- author
+- review_id
+- created_at
+
+# Tasks
+
+-remove pg-format usage from model

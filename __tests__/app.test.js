@@ -12,6 +12,17 @@ afterAll(() => {
 });
 
 describe("GET requests", () => {
+  describe("/api", () => {
+    test("should return info from endpoints.json", () => {
+      return request(app)
+        .get("/api")
+        .expect(200)
+        .then((response) => {
+          expect(response.body).toHaveProperty("GET /api");
+        });
+    });
+  });
+
   describe("/api/categories", () => {
     test("should respond with 200 & body with array of categories", () => {
       return request(app)
@@ -27,6 +38,7 @@ describe("GET requests", () => {
         });
     });
   });
+
   describe("/api/reviews", () => {
     test("should respond with 200 & body with array of review objects", () => {
       return request(app)
@@ -51,6 +63,7 @@ describe("GET requests", () => {
           });
         });
     });
+
     test("should return review objects sorted by created_at in descending order by default", () => {
       return request(app)
         .get("/api/reviews")
@@ -59,6 +72,7 @@ describe("GET requests", () => {
           expect(reviews).toBeSortedBy("created_at", { descending: true });
         });
     });
+
     test("should accept category search query and respond with only reviews of that category", () => {
       return request(app)
         .get("/api/reviews?category=dexterity")
@@ -71,6 +85,7 @@ describe("GET requests", () => {
           });
         });
     });
+
     test("should accept a sort_by query to sort results by selected collumn", () => {
       return request(app)
         .get("/api/reviews?sort_by=votes")
@@ -81,6 +96,7 @@ describe("GET requests", () => {
           expect(reviews).toBeSortedBy("votes", { descending: true });
         });
     });
+
     test("should accept an order query to order results in ascending order", () => {
       return request(app)
         .get("/api/reviews?order=ASC")
@@ -91,6 +107,7 @@ describe("GET requests", () => {
           expect(reviews).toBeSortedBy("created_at", { ascending: true });
         });
     });
+
     test("should accept a category, sort_by and order query and respond with data in correct format", () => {
       return request(app)
         .get("/api/reviews?category=social deduction&sort_by=votes&order=ASC")
@@ -104,6 +121,7 @@ describe("GET requests", () => {
           });
         });
     });
+
     test('400: "Invalid sort query" if sort query is not on green list', () => {
       return request(app)
         .get("/api/reviews?sort_by=im_a_hacker")
@@ -112,6 +130,7 @@ describe("GET requests", () => {
           expect(response.body.msg).toBe("Invalid sort query");
         });
     });
+
     test('400: "Invalid order query" if order query is not on green list', () => {
       return request(app)
         .get("/api/reviews?order=im_a_hacker")
@@ -120,6 +139,7 @@ describe("GET requests", () => {
           expect(response.body.msg).toBe("Invalid order query");
         });
     });
+
     test('404: "Not found" if given non existant category', () => {
       return request(app)
         .get("/api/reviews?category=not_a_category")
@@ -128,6 +148,7 @@ describe("GET requests", () => {
           expect(response.body.msg).toBe("Not found");
         });
     });
+
     test("200: returns empty array if given category with no reviews", () => {
       return request(app)
         .get("/api/reviews?category=children's games")
@@ -157,10 +178,10 @@ describe("GET requests", () => {
             votes: expect.anything(),
             designer: expect.anything(),
           });
-
           expect(review.review_id).toBe(1);
         });
     });
+
     test("404: review not found when a non-existant review is requested", () => {
       return request(app)
         .get(`/api/reviews/10000`)
@@ -169,6 +190,7 @@ describe("GET requests", () => {
           expect(response.body.msg).toBe("Review not found");
         });
     });
+
     test("400: bad request when wrong datatype is used", () => {
       return request(app)
         .get(`/api/reviews/not_a_review_id`)
@@ -199,6 +221,7 @@ describe("GET requests", () => {
           });
         });
     });
+
     test("should return comments sorted by created_at in descending order", () => {
       return request(app)
         .get("/api/reviews/2/comments")
@@ -207,6 +230,7 @@ describe("GET requests", () => {
           expect(comments).toBeSortedBy("created_at", { descending: true });
         });
     });
+
     test('404: "review not found" if given bad review id', () => {
       return request(app)
         .get("/api/reviews/10000/comments")
@@ -215,6 +239,7 @@ describe("GET requests", () => {
           expect(response.body.msg).toBe("Review not found");
         });
     });
+
     test("400: bad request when wrong datatype is used", () => {
       return request(app)
         .get(`/api/reviews/not_a_review_id/comments`)
@@ -224,6 +249,7 @@ describe("GET requests", () => {
         });
     });
   });
+
   describe("/api/users", () => {
     test("200: response body contains array of user objects", () => {
       return request(app)
@@ -257,7 +283,8 @@ describe("POST", () => {
         .send(testComment)
         .expect(201)
         .then((response) => {
-          expect(response.body).toMatchObject({
+          const comment = response.body.comment;
+          expect(comment).toMatchObject({
             author: "dav3rid",
             body: "Test Comment",
             comment_id: expect.any(Number),
@@ -267,7 +294,6 @@ describe("POST", () => {
           });
         })
         .then(() => {
-          // check comment is in the DB
           return request(app)
             .get("/api/reviews/1/comments")
             .then((response) => {
@@ -276,6 +302,7 @@ describe("POST", () => {
             });
         });
     });
+
     test("201: ignores unnecasery properties in request body", () => {
       const testComment = {
         username: "dav3rid",
@@ -288,7 +315,8 @@ describe("POST", () => {
         .send(testComment)
         .expect(201)
         .then((response) => {
-          expect(response.body).toMatchObject({
+          const comment = response.body.comment;
+          expect(comment).toMatchObject({
             author: "dav3rid",
             body: "Test Comment",
             comment_id: expect.any(Number),
@@ -298,6 +326,7 @@ describe("POST", () => {
           });
         });
     });
+
     test('404: "Not found" if nonexistant review id', () => {
       const testComment = {
         username: "dav3rid",
@@ -311,6 +340,7 @@ describe("POST", () => {
           expect(response.body.msg).toBe("Not found");
         });
     });
+
     test('404: "Not found" if given nonexistant username', () => {
       const testComment = {
         username: "not_a_username",
@@ -324,6 +354,7 @@ describe("POST", () => {
           expect(response.body.msg).toBe("Not found");
         });
     });
+
     test('400: "Bad request" if given bad review id', () => {
       const testComment = {
         username: "dav3rid",
@@ -337,6 +368,7 @@ describe("POST", () => {
           expect(response.body.msg).toBe("Bad request");
         });
     });
+
     test('400: "Bad request" if no comment body', () => {
       const testComment = {
         username: "dav3rid",
@@ -351,6 +383,7 @@ describe("POST", () => {
     });
   });
 });
+
 describe("PATCH requests", () => {
   describe("/api/reviews/:review_id (incrament votes)", () => {
     test("should incrament votes, update the table and return the updated review object", () => {
@@ -380,6 +413,7 @@ describe("PATCH requests", () => {
             });
         }); //check its actually in the DB
     });
+
     test("should reduce votes given a negative value, update the table and return the updated review object", () => {
       return request(app)
         .patch("/api/reviews/2")
@@ -407,6 +441,7 @@ describe("PATCH requests", () => {
             });
         }); //check its actually in the DB
     });
+
     test("400: 'Bad request' if sent NaN value", () => {
       return request(app)
         .patch("/api/reviews/2")
@@ -416,6 +451,7 @@ describe("PATCH requests", () => {
           expect(response.body.msg).toBe("Bad request");
         });
     });
+
     test("400: 'Bad request' if no request body", () => {
       return request(app)
         .patch("/api/reviews/2")
@@ -425,6 +461,7 @@ describe("PATCH requests", () => {
           expect(response.body.msg).toBe("Bad request");
         });
     });
+
     test('404: "Not found" if given a nonexistant review id', () => {
       return request(app)
         .patch("/api/reviews/20000")
@@ -434,6 +471,7 @@ describe("PATCH requests", () => {
           expect(response.body.msg).toBe("Not found");
         });
     });
+
     test('400: "Bad request" if review id is not valid', () => {
       return request(app)
         .patch("/api/reviews/not_a_review_id")

@@ -1,4 +1,4 @@
-const comments = require("../db/data/test-data/comments");
+const info = require("../endpoints.json");
 const {
   selectCategories,
   selectReviews,
@@ -8,6 +8,10 @@ const {
   updateReviewVotes,
   selectUsers,
 } = require("./model");
+
+function getInfo(request, response, next) {
+  response.status(200).send(info);
+}
 
 function getCategories(request, response, next) {
   selectCategories()
@@ -20,9 +24,9 @@ function getCategories(request, response, next) {
 }
 
 function getReviews(request, response, next) {
-  const category = request.query.category;
+  const { category } = request.query;
   const sortBy = request.query.sort_by;
-  const order = request.query.order;
+  const { order } = request.query;
 
   selectCategories()
     .then((result) => {
@@ -64,11 +68,11 @@ function getReviewsById(request, response, next) {
 
 function postComment(request, response, next) {
   const reviewId = request.params.review_id;
-  const body = request.body;
+  const { body } = request;
 
   insertComment(reviewId, body)
     .then((comment) => {
-      response.status(201).send(comment);
+      response.status(201).send({ comment }); // send as object
     })
     .catch((err) => {
       next(err);
@@ -99,6 +103,7 @@ function getUsers(request, response, next) {
 }
 
 module.exports = {
+  getInfo,
   getCategories,
   getReviews,
   getCommentsByReviewId,
