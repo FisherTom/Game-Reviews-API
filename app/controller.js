@@ -8,6 +8,7 @@ const {
   updateReviewVotes,
   selectUsers,
   insertCategory,
+  removeComment,
 } = require("./model");
 
 function getInfo(request, response, next) {
@@ -113,6 +114,17 @@ function postCategory(request, response, next) {
     });
 }
 
+function deleteComment(request, response, next) {
+  const commentId = request.params.comment_id;
+  removeComment(commentId)
+    .then(() => {
+      response.status(204).send();
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+
 module.exports = {
   getInfo,
   getCategories,
@@ -123,4 +135,5 @@ module.exports = {
   patchReviewVotes,
   getUsers,
   postCategory,
+  deleteComment,
 };
