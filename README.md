@@ -63,4 +63,4 @@ PGDATABASE=<'database name'>
 
 # Tasks
 
--remove pg-format usage from model
+- update endpoints.json

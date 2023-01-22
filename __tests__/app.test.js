@@ -382,6 +382,30 @@ describe("POST", () => {
         });
     });
   });
+  describe.skip("/api/categories", () => {
+    test("201:adds category to DB and responds with newly added category object ", () => {
+      const testCategory = {
+        slug: "test",
+        description: "test",
+      };
+      return request(app)
+        .post("/api/categories")
+        .send(testCategory)
+        .expect(201)
+        .then((response) => {
+          const { category } = response.body;
+          expect(category).toEqual(testCategory);
+        })
+        .then(() => {
+          return request(app)
+            .get("/api/categories")
+            .then((response) => {
+              const category = response.body.categories[0];
+              expect(category).toEqual(testCategory);
+            });
+        });
+    });
+  });
 });
 
 describe("PATCH requests", () => {
