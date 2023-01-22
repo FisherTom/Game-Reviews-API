@@ -162,11 +162,10 @@ describe("GET requests", () => {
   describe("/api/reviews/:review_id", () => {
     test("should return a review with the correct id", () => {
       return request(app)
-        .get("/api/reviews/1")
+        .get("/api/reviews/3")
         .expect(200)
         .then((response) => {
           const review = response.body.review;
-
           expect(review).toMatchObject({
             owner: expect.anything(),
             title: expect.anything(),
@@ -177,8 +176,10 @@ describe("GET requests", () => {
             created_at: expect.anything(),
             votes: expect.anything(),
             designer: expect.anything(),
+            comment_count: expect.anything(),
           });
-          expect(review.review_id).toBe(1);
+          expect(review.review_id).toBe(3);
+          expect(review.comment_count).toBe("3");
         });
     });
 
