@@ -134,6 +134,14 @@ function insertCategory(requestBody) {
     });
 }
 
+function removeComment(commentId) {
+  const queryString = `DELETE FROM comments WHERE comment_id = $1`;
+
+  return db.query(queryString, [commentId]).then((result) => {
+    //console.log(result);
+  });
+}
+
 module.exports = {
   selectCategories,
   selectReviews,
@@ -143,4 +151,5 @@ module.exports = {
   updateReviewVotes,
   selectUsers,
   insertCategory,
+  removeComment,
 };

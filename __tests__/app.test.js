@@ -534,6 +534,31 @@ describe("PATCH requests", () => {
   });
 });
 
+describe("DELETE requests", () => {
+  describe("/api/comments/:comment_id", () => {
+    test("should 204: no content and remove comment from db", () => {
+      return request(app)
+        .delete("/api/comments/1")
+        .expect(204)
+        .then(() => {
+          return request(app)
+            .get("/api/reviews/2/comments")
+            .then((response) => {
+              const remainingComments = response.body.comments;
+              remainingComments.forEach((comment) => {
+                expect(comment.comment_id).not.toBe(1);
+              });
+            });
+        });
+    });
+
+    test('400: "Bad request" if given invalid comment_id', () => {
+      return request(app).delete("/api/comments/not_an_id").expect(400);
+    });
+    //**  TODO  **// add test for valid out of range comment id? - currently returns no error
+  });
+});
+
 describe("ERRORS", () => {
   test("status:404, responds with an error message when passed a bad end point", () => {
     return request(app)
