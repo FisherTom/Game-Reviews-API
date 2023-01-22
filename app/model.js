@@ -75,14 +75,14 @@ function selectComentsByReviewId(reviewId) {
 }
 
 function selectReviewById(reviewId) {
-  const newQueryString = `SELECT reviews.*, COUNT(comments.comment_id) AS comment_count
+  const queryString = `
+  SELECT reviews.*, COUNT(comments.comment_id) AS comment_count
   FROM reviews
   LEFT JOIN comments ON comments.review_id = reviews.review_id
   GROUP BY reviews.review_id
-  HAVING reviews.review_id = $1;`;
-
-  const queryString = `SELECT * FROM reviews WHERE review_id=$1`;
-  return db.query(newQueryString, [reviewId]).then((result) => {
+  HAVING reviews.review_id = $1;
+  `;
+  return db.query(queryString, [reviewId]).then((result) => {
     if (result.rows.length === 0) {
       return Promise.reject({ status: 404, msg: "Review not found" });
     } else {
