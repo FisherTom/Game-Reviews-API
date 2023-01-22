@@ -10,6 +10,7 @@ const {
   postComment,
   getUsers,
   getInfo,
+  postCategory,
 } = require("./controller");
 
 const {
@@ -28,6 +29,7 @@ app.get("/api/reviews", getReviews);
 app.get("/api/reviews/:review_id", getReviewsById);
 app.get("/api/reviews/:review_id/comments", getCommentsByReviewId);
 app.post("/api/reviews/:review_id/comments", postComment);
+app.post("/api/categories", postCategory);
 app.patch("/api/reviews/:review_id", patchReviewVotes); //not a descriptive endpoint
 
 app.all("/*", endPointNotFound); // if no endpoints are matched

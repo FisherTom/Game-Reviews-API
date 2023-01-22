@@ -24,6 +24,7 @@ PGDATABASE=<'database name'>
 ## POST requests
 
 - ### /api/reviews/:review_id/comments
+- ### /api/categories
 
 ## PATCH requests
 

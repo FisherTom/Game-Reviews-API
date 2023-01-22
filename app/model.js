@@ -113,6 +113,21 @@ function insertComment(reviewId, requestBody) {
     });
 }
 
+function insertCategory(requestBody) {
+  const queryString = `INSERT INTO categories (slug, description)
+  VALUES($1,$2)
+  RETURNING *`;
+
+  if (requestBody.slug === "")
+    return Promise.reject({ status: 400, msg: "Bad request" });
+
+  return db
+    .query(queryString, [requestBody.slug, requestBody.description])
+    .then((result) => {
+      return result.rows[0];
+    });
+}
+
 module.exports = {
   selectCategories,
   selectReviews,
@@ -121,4 +136,5 @@ module.exports = {
   insertComment,
   updateReviewVotes,
   selectUsers,
+  insertCategory,
 };
