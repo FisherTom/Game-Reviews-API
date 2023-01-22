@@ -7,6 +7,7 @@ const {
   insertComment,
   updateReviewVotes,
   selectUsers,
+  insertCategory,
 } = require("./model");
 
 function getInfo(request, response, next) {
@@ -102,6 +103,16 @@ function getUsers(request, response, next) {
     });
 }
 
+function postCategory(request, response, next) {
+  insertCategory(request.body)
+    .then((category) => {
+      response.status(201).send({ category });
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+
 module.exports = {
   getInfo,
   getCategories,
@@ -111,4 +122,5 @@ module.exports = {
   postComment,
   patchReviewVotes,
   getUsers,
+  postCategory,
 };

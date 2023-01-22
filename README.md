@@ -24,6 +24,7 @@ PGDATABASE=<'database name'>
 ## POST requests
 
 - ### /api/reviews/:review_id/comments
+- ### /api/categories
 
 ## PATCH requests
 
@@ -63,4 +64,4 @@ PGDATABASE=<'database name'>
 
 # Tasks
 
--remove pg-format usage from model
+- update endpoints.json

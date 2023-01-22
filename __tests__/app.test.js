@@ -382,6 +382,55 @@ describe("POST", () => {
         });
     });
   });
+  describe("/api/categories", () => {
+    test("201:adds category to DB and responds with newly added category object ", () => {
+      const testCategory = {
+        slug: "test",
+        description: "test",
+      };
+      return request(app)
+        .post("/api/categories")
+        .send(testCategory)
+        .expect(201)
+        .then((response) => {
+          const { category } = response.body;
+          expect(category).toEqual(testCategory);
+        })
+        .then(() => {
+          return request(app)
+            .get("/api/categories")
+            .then((response) => {
+              const category = response.body.categories[4];
+              expect(category).toEqual(testCategory);
+            });
+        });
+    });
+    test('400: "Bad request" if no category name (slug)', () => {
+      const testCategory = {
+        description: "test",
+      };
+      return request(app)
+        .post("/api/categories")
+        .send(testCategory)
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Bad request");
+        });
+    });
+    test('400: "Bad request" if category name (slug) is empty string', () => {
+      const testCategory = {
+        slug: "",
+        description: "test",
+      };
+      return request(app)
+        .post("/api/categories")
+        .send(testCategory)
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Bad request");
+        });
+    });
+  });
 });
 
 describe("PATCH requests", () => {
