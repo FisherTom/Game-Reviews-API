@@ -294,9 +294,10 @@ describe("GET requests", () => {
           expect(response.body.msg).toBe("User not found");
         });
     });
+
     //! did not test for valid type - what is invalid username?
   });
-
+});
 
 describe("POST", () => {
   describe("/api/reviews/:review_id/comments", () => {
