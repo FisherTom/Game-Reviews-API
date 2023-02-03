@@ -269,6 +269,34 @@ describe("GET requests", () => {
         });
     });
   });
+
+  describe("/api/users/:username", () => {
+    test("should return a user with the given username", () => {
+      return request(app)
+        .get("/api/users/mallionaire")
+        .expect(200)
+        .then((response) => {
+          const user = response.body.user;
+          expect(user).toMatchObject({
+            username: "mallionaire",
+            name: "haz",
+            avatar_url:
+              "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+          });
+        });
+    });
+
+    test("404: user not found when a non-existant user is requested", () => {
+      return request(app)
+        .get(`/api/users/not_a_user`)
+        .expect(404)
+        .then((response) => {
+          expect(response.body.msg).toBe("User not found");
+        });
+    });
+
+    //! did not test for valid type - what is invalid username?
+  });
 });
 
 describe("POST", () => {
@@ -555,7 +583,6 @@ describe("DELETE requests", () => {
     test('400: "Bad request" if given invalid comment_id', () => {
       return request(app).delete("/api/comments/not_an_id").expect(400);
     });
-    //**  TODO  **// add test for valid out of range comment id? - currently returns no error
   });
 });
 

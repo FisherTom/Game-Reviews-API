@@ -7,6 +7,7 @@ const {
   insertComment,
   updateReviewVotes,
   selectUsers,
+  selectUserByUsername,
   insertCategory,
   removeComment,
 } = require("./model");
@@ -104,6 +105,18 @@ function getUsers(request, response, next) {
     });
 }
 
+function getUserByUsername(request, response, next) {
+  const username = request.params.username;
+
+  selectUserByUsername(username)
+    .then((user) => {
+      response.status(200).send({ user });
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+
 function postCategory(request, response, next) {
   insertCategory(request.body)
     .then((category) => {
@@ -134,6 +147,7 @@ module.exports = {
   postComment,
   patchReviewVotes,
   getUsers,
+  getUserByUsername,
   postCategory,
   deleteComment,
 };
