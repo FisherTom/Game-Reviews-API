@@ -9,6 +9,7 @@ const {
   patchReviewVotes,
   postComment,
   getUsers,
+  getUserByUsername,
   getInfo,
   postCategory,
   deleteComment,
@@ -25,6 +26,7 @@ app.use(express.json());
 
 app.get("/api", getInfo);
 app.get("/api/users", getUsers);
+app.get("/api/users/:username", getUserByUsername);
 app.get("/api/categories", getCategories);
 app.get("/api/reviews", getReviews);
 app.get("/api/reviews/:review_id", getReviewsById);
