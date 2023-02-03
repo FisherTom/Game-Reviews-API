@@ -9,6 +9,7 @@ const {
   selectUsers,
   selectUserByUsername,
   insertCategory,
+  insertReview,
   removeComment,
 } = require("./model");
 
@@ -127,6 +128,17 @@ function postCategory(request, response, next) {
     });
 }
 
+function postReview(request, response, next) {
+  insertReview(request.body)
+    .then((review) => {
+      response.status(201).send({ review });
+    })
+    .catch((err) => {
+      console.log(err);
+      next(err);
+    });
+}
+
 function deleteComment(request, response, next) {
   const commentId = request.params.comment_id;
   removeComment(commentId)
@@ -149,5 +161,6 @@ module.exports = {
   getUsers,
   getUserByUsername,
   postCategory,
+  postReview,
   deleteComment,
 };

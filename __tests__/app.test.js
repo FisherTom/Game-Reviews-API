@@ -411,6 +411,7 @@ describe("POST", () => {
         });
     });
   });
+
   describe("/api/categories", () => {
     test("201:adds category to DB and responds with newly added category object ", () => {
       const testCategory = {
@@ -434,6 +435,7 @@ describe("POST", () => {
             });
         });
     });
+
     test('400: "Bad request" if no category name (slug)', () => {
       const testCategory = {
         description: "test",
@@ -446,6 +448,7 @@ describe("POST", () => {
           expect(response.body.msg).toBe("Bad request");
         });
     });
+
     test('400: "Bad request" if category name (slug) is empty string', () => {
       const testCategory = {
         slug: "",
@@ -457,6 +460,60 @@ describe("POST", () => {
         .expect(400)
         .then((response) => {
           expect(response.body.msg).toBe("Bad request");
+        });
+    });
+  });
+
+  describe("/api/reviews", () => {
+    test("201:adds review to DB and responds with newly added review object ", () => {
+      const testReview = {
+        owner: "bainesface", //!must be an actual username -TEST
+        title: "Relic",
+        review_body: "This is a great game!",
+        designer: "Defs'naga",
+        category: "dexterity", //!must be an actual category - TEST
+        review_img_url: "www.Test_url.com",
+      };
+      return request(app)
+        .post("/api/reviews")
+        .send(testReview)
+        .expect(201)
+        .then((response) => {
+          const { review } = response.body;
+          expect(review).toMatchObject({
+            owner: expect.any(String),
+            title: expect.any(String),
+            review_body: "This is a great game!",
+            designer: expect.any(String),
+            review_id: expect.any(Number),
+            votes: expect.any(Number),
+            review_img_url: "www.Test_url.com",
+            category: expect.any(String),
+            created_at: expect.anything(),
+            comment_count: expect.anything(),
+            //!should also return comment count foreign key
+          });
+        })
+        .then(() => {
+          return request(app)
+            .get("/api/reviews")
+            .then((response) => {
+              const review = response.body.reviews[0];
+              console.log("🚀 ~ file: app.test.js:501 ~ review ", review);
+              expect(review).toMatchObject({
+                owner: expect.any(String),
+                title: expect.any(String),
+                review_body: "This is a great game!",
+                designer: expect.any(String),
+                review_id: expect.any(Number),
+                votes: expect.any(Number),
+                review_img_url: "www.Test_url.com",
+                category: expect.any(String),
+                created_at: expect.anything(),
+                comment_count: expect.anything(),
+                //!should also return comment count foreign key
+              });
+            });
         });
     });
   });
