@@ -146,6 +146,44 @@ function insertCategory(requestBody) {
     });
 }
 
+function insertReview({
+  title,
+  designer,
+  owner,
+  review_img_url,
+  review_body,
+  category,
+}) {
+  const queryString = `INSERT INTO reviews 
+  (title, designer, owner, review_img_url, review_body, category)
+  VALUES($1,$2,$3,$4,$5,$6)
+  RETURNING *`;
+
+  const emptyFields = [
+    title,
+    owner,
+    review_img_url,
+    review_body,
+    category,
+  ].some((val) => val === "" || val === undefined);
+
+  if (emptyFields) {
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  }
+  return db
+    .query(queryString, [
+      title,
+      designer,
+      owner,
+      review_img_url,
+      review_body,
+      category,
+    ])
+    .then((result) => {
+      return { ...result.rows[0], comment_count: 0 };
+    });
+}
+
 function removeComment(commentId) {
   const queryString = `DELETE FROM comments WHERE comment_id = $1`;
 
@@ -163,6 +201,7 @@ module.exports = {
   updateReviewVotes,
   selectUsers,
   insertCategory,
+  insertReview,
   removeComment,
   selectUserByUsername,
 };
