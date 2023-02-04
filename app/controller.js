@@ -134,7 +134,6 @@ function postReview(request, response, next) {
       response.status(201).send({ review });
     })
     .catch((err) => {
-      console.log(err);
       next(err);
     });
 }

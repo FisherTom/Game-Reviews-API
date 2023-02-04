@@ -491,7 +491,6 @@ describe("POST", () => {
             category: expect.any(String),
             created_at: expect.anything(),
             comment_count: expect.anything(),
-            //!should also return comment count foreign key
           });
         })
         .then(() => {
@@ -499,7 +498,6 @@ describe("POST", () => {
             .get("/api/reviews")
             .then((response) => {
               const review = response.body.reviews[0];
-              console.log("🚀 ~ file: app.test.js:501 ~ review ", review);
               expect(review).toMatchObject({
                 owner: expect.any(String),
                 title: expect.any(String),
@@ -511,10 +509,53 @@ describe("POST", () => {
                 category: expect.any(String),
                 created_at: expect.anything(),
                 comment_count: expect.anything(),
-                //!should also return comment count foreign key
               });
             });
         });
+    });
+    test("400: Bad request if required field is empty", () => {
+      const badTestReview = {
+        owner: "bainesface", //!must be an actual username -TEST
+        title: "",
+        review_body: "This is a great game!",
+        designer: "Defs'naga",
+        category: "dexterity", //!must be an actual category - TEST
+        review_img_url: "www.Test_url.com",
+      };
+      return request(app).post("/api/reviews").send(badTestReview).expect(400);
+    });
+    test("400: Bad request if required are not included in request body", () => {
+      const badTestReview = {
+        owner: "bainesface", //!must be an actual username -TEST
+        // TITLE
+        review_body: "This is a great game!",
+        designer: "Defs'naga",
+        category: "dexterity", //!must be an actual category - TEST
+        review_img_url: "www.Test_url.com",
+      };
+      return request(app).post("/api/reviews").send(badTestReview).expect(400);
+    });
+    test("404: Not found if owner is not in db", () => {
+      const badTestReview = {
+        owner: "poop", //!must be an actual username -TEST
+        title: "Game of Tests",
+        review_body: "This is a great game!",
+        designer: "Defs'naga",
+        category: "dexterity", //!must be an actual category - TEST
+        review_img_url: "www.Test_url.com",
+      };
+      return request(app).post("/api/reviews").send(badTestReview).expect(404);
+    });
+    test("404: Not found if owner is not in db", () => {
+      const badTestReview = {
+        owner: "bainesface", //!must be an actual username -TEST
+        title: "Game of Tests",
+        review_body: "This is a great game!",
+        designer: "Defs'naga",
+        category: "WEEE", //!must be an actual category - TEST
+        review_img_url: "www.Test_url.com",
+      };
+      return request(app).post("/api/reviews").send(badTestReview).expect(404);
     });
   });
 });

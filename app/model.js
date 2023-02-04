@@ -159,9 +159,15 @@ function insertReview({
   VALUES($1,$2,$3,$4,$5,$6)
   RETURNING *`;
 
-  if (
-    (title || owner || review_body || category) === ("" || null || undefined)
-  ) {
+  const emptyFields = [
+    title,
+    owner,
+    review_img_url,
+    review_body,
+    category,
+  ].some((val) => val === "" || val === undefined);
+
+  if (emptyFields) {
     return Promise.reject({ status: 400, msg: "Bad request" });
   }
   return db
