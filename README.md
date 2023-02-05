@@ -10,58 +10,96 @@ If you are cloning this repo before you run it localy you will need to create a 
 PGDATABASE=<'database name'>
 ```
 
-# Endpoints
+# API Endpoints
 
-## GET requests
+The API has the following endpoints:
 
-- ### /api
-- ### /api/reviews
-- ### /api/reviews/:review_id
-- ### /api/reviews/:review_id/comments
-- ### /api/categories
-- ### /api/users
+## GET /api
 
-## POST requests
+- Returns information about API endpoints.
 
-- ### /api/reviews/:review_id/comments
-- ### /api/categories
+## GET /api/users
 
-## PATCH requests
+- Returns an array of user objects.
 
-- ### /api/reviews/:review_id/votes
+```
+    {users:[
+        { userObject }, ...
+    ]}
+```
 
-# Tables
+## GET /api/users/:username
 
-## Reviews
+- Returns a single user with the given username.
 
-- title
-- designer
-- owner
-- review_img_url
-- review_body
-- category
-- created_at
-- votes
+```
+    {user: {
+     'username': 'username',
+     'name': 'name',
+     'avatar_url': 'www.url.com'
+    }}
+```
 
-## Categories
+## GET /api/categories
 
-- slug (category name)
-- description
+- Returns an array of categories.
 
-## Users
+```
+    {categories:[
+        { categoryObject }, ...
+    ]}
+```
 
-- username
-- name
-- avatar_url
+## POST /api/categories
 
-## Comments
+- Adds a new category.
 
-- body
-- votes
-- author
-- review_id
-- created_at
+## GET /api/reviews
 
-# Tasks
+- Returns an array of review objects.
 
-- update endpoints.json
+```
+    {reviews: [
+        { reviewObject }, ...
+    ]}
+```
+
+## GET /api/reviews/:review_id
+
+- Returns a review with the given ID.
+
+```
+    {review:
+        {
+        'title': 'Title',
+        'designer': 'Designer (optional)',
+        'owner': 'Owner (userName)',
+        'review_img_url': 'www.url.com',
+        'review_body': 'Body',
+        'category': 'Category (category slug)',
+        'created_at': 'date',
+        'votes': 'Votes'
+        'comment_count': 'CommentCount'
+        }
+    }
+```
+
+## POST /api/reviews
+
+- Adds a new review.
+
+## GET /api/reviews/:review_id/comments
+
+- Returns an array of comments with the given review ID.
+
+## POST /api/reviews/:review_id/comments
+
+- Adds a comment with the given review ID.
+
+## PATCH /api/reviews/:review_id
+
+- Updates review votes.
+
+## DELETE /api/comments/:comment_id
+
+- Deletes a comment with the given comment ID.
