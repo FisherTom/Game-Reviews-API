@@ -3,6 +3,7 @@ const seed = require("../db/seeds/seed");
 const request = require("supertest");
 const app = require("../app/app");
 const db = require("../db/connection");
+const { response } = require("../app/app");
 
 beforeEach(() => {
   return seed(data);
@@ -561,6 +562,102 @@ describe("POST", () => {
 });
 
 describe("PATCH requests", () => {
+  describe("/api/comments/:comment_id (incrament votes)", () => {
+    test("should incrament votes, update the table and return the updated comment object", () => {
+      return request(app)
+        .patch("/api/comments/1")
+        .send({ inc_votes: 1 })
+        .expect(200)
+        .then((response) => {
+          const { comment } = response.body;
+          expect(comment).toMatchObject({
+            body: "I loved this game too!",
+            votes: 17,
+            author: "bainesface",
+            review_id: 2,
+            created_at: expect.any(String),
+          });
+        })
+        .then(() => {
+          return request(app)
+            .get("/api/reviews/2/comments")
+            .then((response) => {
+              const { votes } = response.body.comments.filter(
+                (comment) => comment.comment_id === 1
+              )[0];
+              expect(votes).toBe(17);
+            });
+        });
+    });
+
+    test("should decrament votes, update the table and return the updated comment object", () => {
+      return request(app)
+        .patch("/api/comments/1")
+        .send({ inc_votes: -1 })
+        .expect(200)
+        .then((response) => {
+          const { comment } = response.body;
+          expect(comment).toMatchObject({
+            body: "I loved this game too!",
+            votes: 15,
+            author: "bainesface",
+            review_id: 2,
+            created_at: expect.any(String),
+          });
+        })
+        .then(() => {
+          return request(app)
+            .get("/api/reviews/2/comments")
+            .then((response) => {
+              const { votes } = response.body.comments.filter(
+                (comment) => comment.comment_id === 1
+              )[0];
+              expect(votes).toBe(15);
+            });
+        });
+    });
+
+    test("400: 'Bad request' if sent NaN value", () => {
+      return request(app)
+        .patch("/api/comments/2")
+        .send({ inc_votes: "Parmesan" })
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Bad request");
+        });
+    });
+
+    test("400: 'Bad request' if no request body", () => {
+      return request(app)
+        .patch("/api/comments/2")
+        .send()
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Bad request");
+        });
+    });
+
+    test('404: "Not found" if given a nonexistant review id', () => {
+      return request(app)
+        .patch("/api/comments/20000")
+        .send({ inc_votes: -2 })
+        .expect(404)
+        .then((response) => {
+          expect(response.body.msg).toBe("Not found");
+        });
+    });
+
+    test('400: "Bad request" if review id is not valid', () => {
+      return request(app)
+        .patch("/api/comments/not_a_comment_id")
+        .send({ inc_votes: -2 })
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Bad request");
+        });
+    });
+  });
+
   describe("/api/reviews/:review_id (incrament votes)", () => {
     test("should incrament votes, update the table and return the updated review object", () => {
       return request(app)

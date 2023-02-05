@@ -11,6 +11,7 @@ const {
   insertCategory,
   insertReview,
   removeComment,
+  updateCommentVotes,
 } = require("./model");
 
 function getInfo(request, response, next) {
@@ -96,6 +97,19 @@ function patchReviewVotes(request, response, next) {
     });
 }
 
+function patchCommentVotes(request, response, next) {
+  const commentId = request.params.comment_id;
+  const incVotes = request.body.inc_votes;
+
+  updateCommentVotes(commentId, incVotes)
+    .then((comment) => {
+      response.status(200).send({ comment });
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+
 function getUsers(request, response, next) {
   selectUsers()
     .then((users) => {
@@ -162,4 +176,5 @@ module.exports = {
   postCategory,
   postReview,
   deleteComment,
+  patchCommentVotes,
 };

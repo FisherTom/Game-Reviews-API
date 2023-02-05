@@ -14,6 +14,7 @@ const {
   postCategory,
   postReview,
   deleteComment,
+  patchCommentVotes,
 } = require("./controller");
 
 const {
@@ -37,6 +38,7 @@ app.post("/api/reviews/:review_id/comments", postComment);
 app.post("/api/categories", postCategory);
 app.patch("/api/reviews/:review_id", patchReviewVotes); //not a descriptive endpoint
 app.delete("/api/comments/:comment_id", deleteComment);
+app.patch("/api/comments/:comment_id", patchCommentVotes);
 
 app.all("/*", endPointNotFound); // if no endpoints are matched
 
