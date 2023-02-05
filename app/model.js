@@ -115,6 +115,18 @@ function updateReviewVotes(reviewId, incVotes) {
   });
 }
 
+function updateCommentVotes(commentId, incVotes) {
+  const queryString = `UPDATE comments SET votes = votes + $1 WHERE comment_id = $2 RETURNING *;`;
+
+  return db.query(queryString, [incVotes, commentId]).then((result, err) => {
+    if (result.rows.length === 0) {
+      return Promise.reject({ status: 404, msg: "Not found" });
+    } else {
+      return result.rows[0];
+    }
+  });
+}
+
 function insertComment(reviewId, requestBody) {
   const queryString = `INSERT INTO comments (body, author, review_id) 
     VALUES ($1,$2,$3)
@@ -204,4 +216,5 @@ module.exports = {
   insertReview,
   removeComment,
   selectUserByUsername,
+  updateCommentVotes,
 };

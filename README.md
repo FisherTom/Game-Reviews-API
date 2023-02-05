@@ -92,13 +92,31 @@ The API has the following endpoints:
 
 - Returns an array of comments with the given review ID.
 
-## POST /api/reviews/:review_id/comments
-
-- Adds a comment with the given review ID.
-
 ## PATCH /api/reviews/:review_id
 
 - Updates review votes.
+- Responds with updated review
+
+example request body:
+
+```
+{ inc_votes: 1 }
+```
+
+## PATCH /api/comments/:comment_id
+
+- Updates comment votes
+- Responds with updated comment
+
+example request body:
+
+```
+{ inc_votes: 1 }
+```
+
+## POST /api/reviews/:review_id/comments
+
+- Adds a comment with the given review ID.
 
 ## DELETE /api/comments/:comment_id
 
