@@ -78,11 +78,7 @@ function selectUserByUsername(username) {
 function selectComentsByReviewId(reviewId) {
   const queryString = `SELECT * FROM comments WHERE review_id=$1 ORDER BY created_at DESC`;
   return db.query(queryString, [reviewId]).then((result) => {
-    if (result.rows.length === 0) {
-      return Promise.reject({ status: 404, msg: "Review not found" });
-    } else {
-      return result.rows;
-    }
+    return result.rows;
   });
 }
 

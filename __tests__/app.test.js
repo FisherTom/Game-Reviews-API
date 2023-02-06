@@ -232,6 +232,8 @@ describe("GET requests", () => {
         });
     });
 
+    //!! review with no comments should return an empty array
+
     test('404: "review not found" if given bad review id', () => {
       return request(app)
         .get("/api/reviews/10000/comments")

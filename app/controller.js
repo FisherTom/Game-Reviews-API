@@ -50,8 +50,9 @@ function getReviews(request, response, next) {
 
 function getCommentsByReviewId(request, response, next) {
   const reviewId = request.params.review_id;
-  selectComentsByReviewId(reviewId)
-    .then((comments) => {
+  Promise.all([selectReviewById(reviewId), selectComentsByReviewId(reviewId)])
+    .then((promises) => {
+      const comments = promises[1];
       response.status(200).send({ comments });
     })
     .catch((err) => {
