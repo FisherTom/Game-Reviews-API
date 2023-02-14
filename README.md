@@ -1,4 +1,4 @@
-# House of Games API
+# Game Review API
 
 ### Link to hosted API - https://game-reviews-k7fw.onrender.com/api
 
